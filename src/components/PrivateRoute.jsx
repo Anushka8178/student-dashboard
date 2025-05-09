@@ -1,26 +1,11 @@
-import { useEffect,useState } from "react";
-import { Navigate } from "react-router-dom";
-import { getAuth,onAuthStateChanged } from "firebase/auth";
-import { app } from "../firebase";
-import { ClipLoader } from "react-spinners";
+import React from 'react';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
-const PrivateRoute=({ children }) =>{
-    const auth=getAuth(app);
-    const [user,setUser]=useState(null);
-    const [loading,setLoading]=useState(true);
+const PrivateRoute = ({ children }) => {
+  const { currentUser } = useAuth();
 
-    useEffect(()=>{
-        const unsubscribe =onAuthStateChanged(auth,(currentUser)=>{
-            setUser(currentUser);
-            setLoading(false);
-        });
-
-        return () => unsubscribe();
-
-    },[auth]);
-
-    if (loading) return <ClipLoader size={50} color="#0000FF" />;
-    return user ? children : <Navigate to="/login" />;
-
+  return currentUser ? children : <Navigate to="/login" />;
 };
-export default PrivateRoute
+
+export default PrivateRoute;
